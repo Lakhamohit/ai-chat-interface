@@ -119,23 +119,40 @@ async function searchWikipedia(query){
 
     try {
 
-        let url =
-        "https://en.wikipedia.org/api/rest_v1/page/summary/"
-        + encodeURIComponent(query);
+        // Step 1: Search Wikipedia
+        let searchURL =
+        "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch="
+        + encodeURIComponent(query)
+        + "&format=json&origin=*";
 
 
-        let response = await fetch(url);
+        let searchResponse = await fetch(searchURL);
+
+        let searchData = await searchResponse.json();
 
 
-        if(!response.ok){
+        if(!searchData.query.search.length){
             return null;
         }
 
 
-        let data = await response.json();
+        // Step 2: Get first result title
+        let title = searchData.query.search[0].title;
 
 
-        return data.extract;
+        // Step 3: Get summary
+        let summaryURL =
+        "https://en.wikipedia.org/api/rest_v1/page/summary/"
+        + encodeURIComponent(title);
+
+
+        let summaryResponse = await fetch(summaryURL);
+
+
+        let summaryData = await summaryResponse.json();
+
+
+        return summaryData.extract;
 
 
     }
@@ -144,6 +161,7 @@ async function searchWikipedia(query){
         console.log(error);
 
         return null;
+
     }
 
 }
