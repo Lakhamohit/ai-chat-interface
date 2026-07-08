@@ -61,6 +61,21 @@ MiniAI/
 ├── brain.js
 └── README.md
 ```
+---
+
+MiniAI/
+│
+├── frontend/
+│   ├── index.html
+│   ├── style.css
+│   └── app.js
+│
+├── backend/
+│   ├── server.js
+│   ├── brain.js
+│   └── package.json
+│
+└── README.md
 
 ---
 
