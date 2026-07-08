@@ -1,242 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>MiniAI v0.1</title>
-
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f1f3f5;
-    margin: 0;
-    padding: 20px;
-}
-
-#chat-container {
-    max-width: 600px;
-    margin: auto;
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-}
-
-#chat-box {
-    height: 400px;
-    overflow-y: auto;
-    border: 1px solid #ddd;
-    padding: 10px;
-    background: #fafafa;
-}
-
-.message {
-    padding: 10px;
-    margin: 10px;
-    border-radius: 8px;
-}
-
-.user {
-    background: #007bff;
-    color: white;
-    margin-left: 20%;
-}
-
-.ai {
-    background: #e9ecef;
-    margin-right: 20%;
-}
-
-#input-area {
-    display: flex;
-    margin-top: 10px;
-    gap: 10px;
-}
-
-input {
-    flex: 1;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-
-button {
-    padding: 10px 20px;
-    background: #007bff;
-    color:white;
-    border:none;
-    border-radius:5px;
-    cursor:pointer;
-}
-
-button:hover {
-    background:#0056b3;
-}
-</style>
-
+    <title>MiniAI</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div id="chat-container">
+<div class="container">
 
 <h2>🤖 MiniAI</h2>
 
-<div id="chat-box"></div>
+<div id="chat"></div>
 
-<div id="input-area">
-<input id="user-input" placeholder="Ask something...">
-<button onclick="sendMessage()">Send</button>
+<div class="input-box">
+
+<input 
+id="message"
+placeholder="Ask MiniAI..."
+>
+
+<button onclick="sendMessage()">
+Send
+</button>
+
 </div>
 
 </div>
 
 
-<script>
-
-const chatBox = document.getElementById("chat-box");
-const input = document.getElementById("user-input");
-
-
-function addMessage(text, type){
-
-    let div = document.createElement("div");
-
-    div.className = "message " + type;
-
-    div.innerText = text;
-
-    chatBox.appendChild(div);
-
-    chatBox.scrollTop = chatBox.scrollHeight;
-
-}
-
-
-
-async function searchWikipedia(query){
-
-    try {
-
-        // Step 1: Search Wikipedia
-        let searchURL =
-        "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch="
-        + encodeURIComponent(query)
-        + "&format=json&origin=*";
-
-
-        let searchResponse = await fetch(searchURL);
-
-        let searchData = await searchResponse.json();
-
-
-        if(!searchData.query.search.length){
-            return null;
-        }
-
-
-        // Step 2: Get first result title
-        let title = searchData.query.search[0].title;
-
-
-        // Step 3: Get summary
-        let summaryURL =
-        "https://en.wikipedia.org/api/rest_v1/page/summary/"
-        + encodeURIComponent(title);
-
-
-        let summaryResponse = await fetch(summaryURL);
-
-
-        let summaryData = await summaryResponse.json();
-
-
-        return summaryData.extract;
-
-
-    }
-    catch(error){
-
-        console.log(error);
-
-        return null;
-
-    }
-
-}
-
-
-
-async function think(question){
-
-    addMessage("Thinking...", "ai");
-
-
-    let answer = await searchWikipedia(question);
-
-
-    let messages = document.querySelectorAll(".ai");
-
-    messages[messages.length-1].remove();
-
-
-
-    if(answer){
-
-        return answer;
-
-    }
-    else {
-
-        return "I couldn't find information about that yet.";
-
-    }
-
-}
-
-
-
-async function sendMessage(){
-
-    let question = input.value.trim();
-
-
-    if(question==="") return;
-
-
-    addMessage(question,"user");
-
-
-    input.value="";
-
-
-    let reply = await think(question);
-
-
-    addMessage(reply,"ai");
-
-}
-
-
-
-input.addEventListener("keypress",function(e){
-
-    if(e.key==="Enter"){
-        sendMessage();
-    }
-
-});
-
-
-addMessage(
-"Hello! I am MiniAI. Ask me anything.",
-"ai"
-);
-
-
-</script>
-
+<script src="app.js"></script>
 
 </body>
 </html>
